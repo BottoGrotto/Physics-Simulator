@@ -12,8 +12,8 @@ class Simulation:
         pygame.display.set_caption("Ball Dropper")
         self.clock = pygame.time.Clock()
         self.balls = []
-        self.balls.append(Ball(pos=[WIDTH/2 + 30, HEIGHT/4], radius=20, color="red", V0=0, elasticity=1, showOverlay=True))
-        self.balls.append(Ball([WIDTH/4 - 30, HEIGHT/4], 40, "blue", 1000, 0.25, showOverlay=True))
+        self.balls.append(Ball(pos=[WIDTH/2 + 30, HEIGHT/4], radius=20, color="white", V0=0, elasticity=1, showOverlay=True))
+        self.balls.append(Ball([WIDTH/4 - 30, HEIGHT/4], 40, "white", 500, 0.25, showOverlay=True))
         self.dragging = False
         self.mouse_move_amount = (0, 0)
         # # self.ball2 = Ball([WIDTH/4, HEIGHT], 40, "blue", V0=-1000, elasticity=0.5, ball_count=2)
@@ -23,6 +23,7 @@ class Simulation:
         # pygame.mouse.set_visible(False)
         self.mouseDragList = []
         self.pressed = False
+        self.allOverlaysOff = False
 
         self.ballToMakeRadius = 5
 
@@ -58,6 +59,16 @@ class Simulation:
                     if event.key == pygame.K_c:
                         # print("Hello")
                         self.balls = []
+                    if event.key == pygame.K_o:
+                        if self.allOverlaysOff == False:
+                            for ball in self.balls:
+                                ball.showOverlay = False
+                            self.allOverlaysOff = True
+                        else:
+                            for ball in self.balls:
+                                ball.showOverlay = True
+                            self.allOverlaysOff = False
+
                     # print(self.ballToMakeRadius)
                     # print(self.mouse_move_amount)
             if pygame.mouse.get_pressed()[0] and not self.pressed:
@@ -71,7 +82,7 @@ class Simulation:
                 self.pressed = False
                 
                 
-                self.balls.append(Ball([self.startPos[0], self.startPos[1]], self.ballToMakeRadius, "white", pygame.mouse.get_rel()[1]*-1, 0.75, True))
+                self.balls.append(Ball([self.startPos[0], self.startPos[1]], self.ballToMakeRadius, "white", pygame.mouse.get_rel()[1]*-1, 1, True if self.allOverlaysOff == False else False))
                 self.ballToMakeRadius = 5
                 # print("Mouse upressed")
 
@@ -81,7 +92,7 @@ class Simulation:
             self.display.fill("black")
             if self.pressed:
                 self.dragOverlay.draw(mousePos, ("V", (mousePos[1] - self.startPos[1]) * -1))
-                pygame.draw.circle(self.display, "white", self.startPos, self.ballToMakeRadius)
+                pygame.draw.circle(self.display, "blue", self.startPos, self.ballToMakeRadius)
             # if self.dragging:
             #     self.dragEffect.draw(pygame.mouse.get_pos())
             for ball in self.balls:

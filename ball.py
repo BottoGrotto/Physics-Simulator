@@ -98,13 +98,18 @@ class Ball:
         # print(self.pos)
 
     def draw(self):
-       pygame.draw.circle(self.display, self.color, self.pos, self.radius)
+       
+       pygame.draw.circle(self.display, self.speed_to_color(), self.pos, self.radius)
        if self.showOverlay:
         self.overlay.draw(self.pos, ("Y", self.pos[1]), ("V", self.v), self.elasticity)
     #    self.display.blit(self.yText, self.textRect)
     #    self.display.blit(self.yLabel, self.textRect2)
     #    self.display.blit(self.vText, self.textRect3)
     #    self.display.blit(self.vLabel, self.textRect4)
+
+    def speed_to_color(self):
+        intensity = min(255, int((abs(self.v) / 1000) * 255))
+        return (intensity, 0, 255 - intensity)
 
     def update(self, dt):
         self.move(dt)
