@@ -3,24 +3,25 @@ from dataOverlay import OverLay
 pygame.init()
 
 class Ball:
-    def __init__ (self, pos, radius, color, V0, elasticity, showOverlay):
+    def __init__ (self, pos, radius, color, V0X, V0Y, elasticity, showOverlay):
         self.radius = radius
         self.color = color
         self.display = pygame.display.get_surface()
         self.displayHeight = self.display.get_height()
 
-        self.V0 = V0
+        self.V0 = [V0Y, V0Y]
         self.elasticity = elasticity
         self.pos = pos
+        # self.g = 0
         self.g = -9.8
-
-        self.lastV = V0
+        
+        self.lastV = [V0[0], V0[1]]
         self.scalar = 100
         self.t0 = time.time()
-        self.Y0 = pos[1]
+        self.Pos0 = pos[1]
         self.showOverlay = showOverlay
-        if self.showOverlay:
-            self.overlay = OverLay((pos[0], pos[1]), self.color, 10, ("Y", self.pos[1]), ("V", self.V0), self.radius, self.V0)
+        # if self.showOverlay:
+        self.overlay = OverLay((pos[0], pos[1]), self.color, 10, ("Y", self.pos[1]), ("V", self.V0), self.radius, self.V0)
 
 
 
@@ -98,7 +99,6 @@ class Ball:
         # print(self.pos)
 
     def draw(self):
-       
        pygame.draw.circle(self.display, self.speed_to_color(), self.pos, self.radius)
        if self.showOverlay:
         self.overlay.draw(self.pos, ("Y", self.pos[1]), ("V", self.v), self.elasticity)

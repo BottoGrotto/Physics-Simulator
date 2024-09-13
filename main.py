@@ -4,7 +4,7 @@ from ball import Ball
 from mouseDragEffect import DragEffect
 from dataOverlay import SingleOverlay
 WIDTH = 400
-HEIGHT = 800
+HEIGHT = 600
 
 class Simulation:
     def __init__(self):
@@ -12,7 +12,7 @@ class Simulation:
         pygame.display.set_caption("Ball Dropper")
         self.clock = pygame.time.Clock()
         self.balls = []
-        self.balls.append(Ball(pos=[WIDTH/2 + 30, HEIGHT/4], radius=20, color="white", V0=0, elasticity=1, showOverlay=True))
+        # self.balls.append(Ball(pos=[WIDTH/2 + 30, HEIGHT/4], radius=20, color="white", V0=0, elasticity=1, showOverlay=True))
         self.balls.append(Ball([WIDTH/4 - 30, HEIGHT/4], 40, "white", 500, 0.25, showOverlay=True))
         self.dragging = False
         self.mouse_move_amount = (0, 0)
@@ -25,7 +25,8 @@ class Simulation:
         self.pressed = False
         self.allOverlaysOff = False
 
-        self.ballToMakeRadius = 5
+        self.ballToMakeRadius = 10
+        self.ballToMakeElasticity = 0.75
 
         self.dragOverlay = SingleOverlay(pygame.mouse.get_pos(), "white", 10, ("V", 0), 5)
         
@@ -69,12 +70,28 @@ class Simulation:
                                 ball.showOverlay = True
                             self.allOverlaysOff = False
 
+                    if event.key == pygame.K_UP:
+                        
+                        self.ballToMakeRadius += 1
+                    elif event.key == pygame.K_DOWN:
+                        if not self.ballToMakeRadius -1 <= 5:
+                            self.ballToMakeRadius -= 1
+
+                    if event.key == pygame.K_LEFT:
+                        if not self.ballToMakeElasticity - 0.05 <= 0:
+                            self.ballToMakeElasticity = round(self.ballToMakeElasticity - 0.05, 2)
+                            print(self.ballToMakeElasticity)
+                    elif event.key == pygame.K_RIGHT:
+                        self.ballToMakeElasticity = round(self.ballToMakeElasticity + 0.05, 2)
+
                     # print(self.ballToMakeRadius)
                     # print(self.mouse_move_amount)
             if pygame.mouse.get_pressed()[0] and not self.pressed:
                 pygame.mouse.get_rel()
                 self.pressed = True
                 self.startPos = mousePos
+                self.ballToMakeRadius = 10
+                self.ballToMakeElasticity = 0.75
                 # print("Mouse pressed")
                 # print(self.ballToMakeRadius)
                 
@@ -82,8 +99,9 @@ class Simulation:
                 self.pressed = False
                 
                 
-                self.balls.append(Ball([self.startPos[0], self.startPos[1]], self.ballToMakeRadius, "white", pygame.mouse.get_rel()[1]*-1, 1, True if self.allOverlaysOff == False else False))
-                self.ballToMakeRadius = 5
+                self.balls.append(Ball([self.startPos[0], self.startPos[1]], self.ballToMakeRadius, "white", pygame.mouse.get_rel()[1]*-1, self.ballToMakeElasticity, True if self.allOverlaysOff == False else False))
+                self.ballToMakeRadius = 10
+                self.ballToMakeElasticity = 0.75
                 # print("Mouse upressed")
 
             # if self.dragging:
@@ -91,8 +109,9 @@ class Simulation:
 
             self.display.fill("black")
             if self.pressed:
-                self.dragOverlay.draw(mousePos, ("V", (mousePos[1] - self.startPos[1]) * -1))
                 pygame.draw.circle(self.display, "blue", self.startPos, self.ballToMakeRadius)
+                self.dragOverlay.draw(mousePos, ("V", (mousePos[1] - self.startPos[1]) * -1))
+
             # if self.dragging:
             #     self.dragEffect.draw(pygame.mouse.get_pos())
             for ball in self.balls:
