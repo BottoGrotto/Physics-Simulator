@@ -3,8 +3,8 @@ pygame.init()
 from ball import Ball
 from mouseDragEffect import DragEffect
 from dataOverlay import SingleOverlay
-WIDTH = 400
-HEIGHT = 600
+WIDTH = 800
+HEIGHT = 800
 
 class Simulation:
     def __init__(self):
@@ -13,7 +13,7 @@ class Simulation:
         self.clock = pygame.time.Clock()
         self.balls = []
         # self.balls.append(Ball(pos=[WIDTH/2 + 30, HEIGHT/4], radius=20, color="white", V0=0, elasticity=1, showOverlay=True))
-        self.balls.append(Ball([WIDTH/4 - 30, HEIGHT/4], 40, "white", 500, 0.25, showOverlay=True))
+        # self.balls.append(Ball([WIDTH/4 - 30, HEIGHT/4], 40, "white", [0, 0], 0.75, showOverlay=True))
         self.dragging = False
         self.mouse_move_amount = (0, 0)
         # # self.ball2 = Ball([WIDTH/4, HEIGHT], 40, "blue", V0=-1000, elasticity=0.5, ball_count=2)
@@ -98,8 +98,8 @@ class Simulation:
             if not pygame.mouse.get_pressed()[0] and self.pressed: 
                 self.pressed = False
                 
-                
-                self.balls.append(Ball([self.startPos[0], self.startPos[1]], self.ballToMakeRadius, "white", pygame.mouse.get_rel()[1]*-1, self.ballToMakeElasticity, True if self.allOverlaysOff == False else False))
+                mouseRel = pygame.mouse.get_rel()
+                self.balls.append(Ball([self.startPos[0], self.startPos[1]], self.ballToMakeRadius, "white", [mouseRel[0]*-1, mouseRel[1]*-1], self.ballToMakeElasticity, True if self.allOverlaysOff == False else False))
                 self.ballToMakeRadius = 10
                 self.ballToMakeElasticity = 0.75
                 # print("Mouse upressed")
