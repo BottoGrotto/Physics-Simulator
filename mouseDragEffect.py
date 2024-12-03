@@ -9,7 +9,7 @@ class DragEffect:
         self.distance = distance
         self.current_distance = 0
 
-        self.initalMouse = (0, 0)
+        # self.initalMouse = (0, 0)
 
         self.start = mouseStart
         self.ballsPos = []

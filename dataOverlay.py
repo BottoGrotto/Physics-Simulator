@@ -43,23 +43,22 @@ class OverLay:
         self.display.blit(self.text, self.textRect)
 
 class SingleOverlay:
-    def __init__(self, pos, color, fontSize, values1, radius):
+    def __init__(self, pos, color, fontSize, values1, radius, offset):
         self.display = pygame.display.get_surface()
         self.pos = pos
         self.color = color
         self.fontSize = fontSize
         self.font = pygame.font.Font('freesansbold.ttf', self.fontSize)
+        self.offset = offset
 
         self.values1 = values1
-        # self.values2 = values2
 
         self.radius = radius
 
-        # self.V0 = V0
     def draw(self, pos, values1):
         self.values1 = values1
         self.pos = pos
         self.text = self.font.render(f"{values1[0]}: {values1[1]}", True, self.color)
         self.textRect = self.text.get_rect()
-        self.textRect.topleft = (self.pos[0] + self.radius, self.pos[1])
+        self.textRect.topleft = (self.pos[0] + self.radius, self.pos[1] + self.offset)
         self.display.blit(self.text, self.textRect)

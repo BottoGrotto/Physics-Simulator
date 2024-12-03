@@ -1,17 +1,20 @@
 import pygame, sys
+from pygame.locals import *
 pygame.init()
 from ball import Ball
 from mouseDragEffect import DragEffect
 from dataOverlay import SingleOverlay
+from collisionChecker import CollisionChecker
 WIDTH = 800
-HEIGHT = 800
+HEIGHT = 500
 
 class Simulation:
     def __init__(self):
-        self.display = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.display = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption("Ball Dropper")
         self.clock = pygame.time.Clock()
         self.balls = []
+        self.collisionChecker = CollisionChecker()
         # self.balls.append(Ball(pos=[WIDTH/2 + 30, HEIGHT/4], radius=20, color="white", V0=0, elasticity=1, showOverlay=True))
         # self.balls.append(Ball([WIDTH/4 - 30, HEIGHT/4], 40, "white", [0, 0], 0.75, showOverlay=True))
         self.dragging = False
@@ -23,12 +26,14 @@ class Simulation:
         # pygame.mouse.set_visible(False)
         self.mouseDragList = []
         self.pressed = False
-        self.allOverlaysOff = False
+        self.allOverlaysOff = True
 
         self.ballToMakeRadius = 10
         self.ballToMakeElasticity = 0.75
 
-        self.dragOverlay = SingleOverlay(pygame.mouse.get_pos(), "white", 10, ("V", 0), 5)
+        self.dragOverlayY = SingleOverlay(pygame.mouse.get_pos(), "white", 10, ("V", 0), 8, offset=0)
+        self.dragOverlayX = SingleOverlay(pygame.mouse.get_pos(), "white", 10, ("X", 0), 8, offset=10)
+        # pygame.mouse.set_visible(False)
         
     def run(self):
         while True:
@@ -83,6 +88,8 @@ class Simulation:
                             print(self.ballToMakeElasticity)
                     elif event.key == pygame.K_RIGHT:
                         self.ballToMakeElasticity = round(self.ballToMakeElasticity + 0.05, 2)
+                        print(self.ballToMakeElasticity)
+
 
                     # print(self.ballToMakeRadius)
                     # print(self.mouse_move_amount)
@@ -99,7 +106,8 @@ class Simulation:
                 self.pressed = False
                 
                 mouseRel = pygame.mouse.get_rel()
-                self.balls.append(Ball([self.startPos[0], self.startPos[1]], self.ballToMakeRadius, "white", [mouseRel[0]*-1, mouseRel[1]*-1], self.ballToMakeElasticity, True if self.allOverlaysOff == False else False))
+                self.balls.append(Ball([self.startPos[0], self.startPos[1]], self.ballToMakeRadius, "white", [mouseRel[0]*-1, mouseRel[1]*-1], self.ballToMakeElasticity, True if self.allOverlaysOff == False else False, 0.23, 0.9, 10))
+                # self.collisionChecker.updateBallList(self.balls)
                 self.ballToMakeRadius = 10
                 self.ballToMakeElasticity = 0.75
                 # print("Mouse upressed")
@@ -107,15 +115,29 @@ class Simulation:
             # if self.dragging:
                 
 
-            self.display.fill("black")
+            self.display.fill("#322f40")
             if self.pressed:
                 pygame.draw.circle(self.display, "blue", self.startPos, self.ballToMakeRadius)
-                self.dragOverlay.draw(mousePos, ("V", (mousePos[1] - self.startPos[1]) * -1))
+                self.dragOverlayY.draw(mousePos, ("V", (mousePos[1] - self.startPos[1]) * -1))
+                self.dragOverlayX.draw(mousePos, ("X", (mousePos[0] - self.startPos[0]) * -1))
 
             # if self.dragging:
             #     self.dragEffect.draw(pygame.mouse.get_pos())
-            for ball in self.balls:
-                ball.update(dt)
+            for ball1 in self.balls:
+                # ball.move(dt)
+                for ball2 in self.balls:
+                        if ball1 == ball2:
+                            continue
+                        else:
+                            self.collisionChecker.correctAndCheckCollision(ball1, ball2)
+                                # self.collisionChecker.correctCollision(ball1, ball2):
+                            # print(True if  else None)
+                ball1.update(dt)
+                
+            
+            # for ball in self.balls:
+
+                
             # self.ball.update(dt)
             # self.ball2.update(dt)
             # self.ball3.update(dt)
